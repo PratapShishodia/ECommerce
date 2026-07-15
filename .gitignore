@@ -1,0 +1,54 @@
+# ==========================================
+# Environment files
+# ==========================================
+frontend/.env
+frontend/.env.*
+
+backend/**/.env
+backend/**/.env.*
+
+# ==========================================
+# Node.js / Vite
+# ==========================================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# ==========================================
+# Java / Spring Boot
+# ==========================================
+backend/**/target/
+backend/**/build/
+backend/**/.gradle/
+backend/**/out/
+
+# IntelliJ
+backend/**/.idea/
+backend/**/*.iml
+
+# Eclipse
+backend/**/.project
+backend/**/.classpath
+backend/**/.settings/
+
+# VS Code
+.vscode/
+
+# ==========================================
+# Project Logs
+# ==========================================
+logs/
+*.log
+
+# ==========================================
+# OS Files
+# ==========================================
+.DS_Store
+Thumbs.db
