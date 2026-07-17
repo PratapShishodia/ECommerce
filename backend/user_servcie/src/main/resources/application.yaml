@@ -16,7 +16,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: ${DB_DIALECT}
   mail:
     host: smtp-relay.brevo.com
     port: 587
@@ -29,7 +29,7 @@ spring:
           starttls:
             enable: true
 server:
-  port: 8080
+  port: ${PORT}
   servlet:
     context-path: /api
 
