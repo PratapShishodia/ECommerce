@@ -45,5 +45,5 @@ logging:
     max-size: 10MB
     max-history: 30
     total-size-cap: 1GB
-    
+
 SMTP_FROM: punitshishodia2122@gmail.com
