@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: notification_service
+  mail:
+    host: smtp-relay.brevo.com
+    port: 587
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_KEY}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  mongodb:
+    database: ${DATABASE}
+    port: ${DB_PORT}
+    host: ${DB_HOST}
+
+logging:
+  pattern:
+    console: ${CONSOLE_LOG_PATTERN:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %cyan(%msg%n)}
+  level:
+    root: INFO
+    com:
+      ps:
+        backend: DEBUG
+  file:
+    name: ../logs/${spring.application.name}.log
+    max-size: 10MB
+    max-history: 30
+    total-size-cap: 1GB
+
+SMTP_FROM: ${SMTP_FROM}
+server:
+  port: ${APPLICATION_PORT}
