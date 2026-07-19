@@ -50,3 +50,30 @@ jwt:
   AccessTokenExpiration : 900000
   refreshTokenExpiration : 604800000
 SMTP_FROM: punitshishodia2122@gmail.com
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:9090/eureka/
+    instance:
+      instance-id: ${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: always
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: Microservice
+    version: 1.0.0
