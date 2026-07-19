@@ -17,5 +17,4 @@ public class PaymentRequestDTO {
     private BigDecimal amount;
     private String paymentCurrency;
     private String paymentMethod;
-    private LocalDateTime paymentDate;
 }

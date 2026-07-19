@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment  payment = PaymentDTOMapper.toEntity(paymentRequestDTO);
         payment.setTransactionId(UUID.randomUUID());
         payment.setStatus("PENDING");
+        payment.setPaymentDate(LocalDateTime.now());
         return PaymentDTOMapper.toDTO(paymentRepo.save(payment));
     }
 

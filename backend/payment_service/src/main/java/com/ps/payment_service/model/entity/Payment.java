@@ -1,5 +1,6 @@
 package com.ps.payment_service.model.entity;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

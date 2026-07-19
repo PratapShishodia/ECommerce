@@ -28,7 +28,7 @@ spring:
           starttls:
             enable: true
 server:
-  port: ${PORT}
+  port: ${APPLICATION_PORT}
   servlet:
     context-path: /api
 
