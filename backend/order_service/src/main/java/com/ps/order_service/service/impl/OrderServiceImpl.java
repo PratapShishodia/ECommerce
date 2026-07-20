@@ -1,6 +1,10 @@
 package com.ps.order_service.service.impl;
 
+import com.ps.order_service.client.InventoryClient;
+import com.ps.order_service.client.NotificationClient;
+import com.ps.order_service.client.PaymentClient;
 import com.ps.order_service.customExceptions.ResourceNotFoundException;
+import com.ps.order_service.model.client.*;
 import com.ps.order_service.model.dto.common.PageResponseDTO;
 import com.ps.order_service.model.dto.mapper.OrderDTOMapper;
 import com.ps.order_service.model.dto.mapper.OrderItemDTOMapper;
@@ -29,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepo;
     private final OrderItemService orderItemService;
+    private final PaymentClient paymentClient;
+    private final NotificationClient notificationClient;
 
     @Override
     public OrderResponseDTO createOrder(OrderRequestDTO request) {
@@ -50,7 +56,33 @@ public class OrderServiceImpl implements OrderService {
         order.setAmount(totalAmount);
         order.setOrderDate(LocalDateTime.now());
         Order savedOrder = orderRepo.save(order);
+        PaymentResponseDTO responseDTO = new PaymentResponseDTO();
+        try{
+            PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO();
+            paymentRequestDTO.setUserId(request.getUserId());
+            paymentRequestDTO.setOrderId(savedOrder.getOrderId());
+            paymentRequestDTO.setAmount(order.getAmount());
+            paymentRequestDTO.setPaymentCurrency("INR");
+            paymentRequestDTO.setPaymentMethod("UPI");
+            responseDTO = paymentClient.initiatePayment(paymentRequestDTO);
+        }
+        catch(RuntimeException e){
+            throw e;
+        }
+        savedOrder.setPaymentStatus("PENDING");
+        PaymentVerificationRequestDTO  paymentVerificationRequestDTO = new PaymentVerificationRequestDTO();
+        paymentVerificationRequestDTO.setPaymentId(responseDTO.getPaymentId());
+        paymentVerificationRequestDTO.setTransactionId(String.valueOf(responseDTO.getTransactionId()));
+        PaymentResponseDTO responseDTO1 = paymentClient.verifyPayment(paymentVerificationRequestDTO);
 
+        
+
+        NotificationRequestDTO notificationRequestDTO = new NotificationRequestDTO();
+        notificationRequestDTO.setUserId(request.getUserId());
+        notificationRequestDTO.setMessage( "Dear User,\n\nYour order #ORD-"+savedOrder.getOrderId()+" has been placed successfully. Thank you for shopping with us!\n\nRegards,\nE-Commerce Team");
+        notificationRequestDTO.setRecipient("pratapshishodia22@gmail.com");
+        notificationRequestDTO.setSubject("Order #"+savedOrder.getOrderId());
+        notificationClient.sendNotification(notificationRequestDTO);
         return OrderDTOMapper.toDTO(savedOrder);
 
     }
@@ -66,6 +98,12 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDTO updateStatus(Long orderId, String status) {
         Order order = orderRepo.findById(orderId).orElseThrow(()-> new ResourceNotFoundException("Order","Order Id",String.valueOf(orderId)));
         order.setStatus(status);
+        return OrderDTOMapper.toDTO(orderRepo.save(order));
+    }
+    @Override
+    public OrderResponseDTO updatePaymentStatus(Long orderId, String status) {
+        Order order = orderRepo.findById(orderId).orElseThrow(()-> new ResourceNotFoundException("Order","Order Id",String.valueOf(orderId)));
+        order.setPaymentStatus(status);
         return OrderDTOMapper.toDTO(orderRepo.save(order));
     }
 

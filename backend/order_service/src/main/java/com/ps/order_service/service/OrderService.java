@@ -12,4 +12,5 @@ public interface OrderService {
     OrderResponseDTO updateStatus(Long orderId,String status);
     OrderResponseDTO getOrderById(Long orderId);
    PageResponseDTO<OrderResponseDTO> getAllOrders(int page_num,int page_size,Long userId);
+    OrderResponseDTO updatePaymentStatus(Long orderId, String status);
 }

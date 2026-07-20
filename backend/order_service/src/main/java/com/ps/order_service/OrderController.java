@@ -30,6 +30,10 @@ public class OrderController {
     public ResponseEntity<OrderResponseDTO> updateStatus(@PathVariable Long orderId,@RequestParam String status){
         return ResponseEntity.ok(orderService.updateStatus(orderId,status));
     }
+    @PutMapping("/updatePaymentStatus/{orderId}")
+    public ResponseEntity<OrderResponseDTO> updatePaymentStatus(@PathVariable Long orderId,@RequestParam String status){
+        return ResponseEntity.ok(orderService.updatePaymentStatus(orderId,status));
+    }
 
     @PatchMapping("/cancel/{orderId}")
     public ResponseEntity<OrderResponseDTO> cancelOrder(@PathVariable Long orderId){
