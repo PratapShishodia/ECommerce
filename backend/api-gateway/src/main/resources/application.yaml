@@ -1,0 +1,23 @@
+server:
+  port: 9095
+
+spring:
+  application:
+    name: api_gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9090/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: config-server
+  kafka:
+    bootstrap-servers: localhost:29092
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/PratapShishodia/Ecommerce_Config_server.git
+          default-label: main
+          timeout: 5
+          clone-on-start: true
+          force-pull: true
+          username: PratapShishodia
+          password: ${GIT_TOKEN}
+server:
+  port: 9071
+management:
+  endpoints:
+    web:
+      exposure:
+        include: busrefresh,health,info
