@@ -1,6 +1,8 @@
 spring:
   application:
-    name: notification_service
+    name: notification-service
+  config:
+    import: optional:configserver:http://localhost:9071
   mail:
     host: smtp-relay.brevo.com
     port: 587
@@ -12,52 +14,51 @@ spring:
           auth: true
           starttls:
             enable: true
-  mongodb:
-    database: ${DATABASE}
-    port: ${DB_PORT}
-    host: ${DB_HOST}
-
-logging:
-  pattern:
-    console: ${CONSOLE_LOG_PATTERN:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %cyan(%msg%n)}
-  level:
-    root: INFO
-    com:
-      ps:
-        backend: DEBUG
-  file:
-    name: ../logs/${spring.application.name}.log
-    max-size: 10MB
-    max-history: 30
-    total-size-cap: 1GB
-
-SMTP_FROM: ${SMTP_FROM}
-server:
-  port: ${APPLICATION_PORT}
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:9090/eureka/
-    instance:
-      instance-id: ${spring.application.name}:${server.port}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-  endpoint:
-    health:
-      show-details: always
-
-info:
-  app:
-    name: ${spring.application.name}
-    description: Microservice
-    version: 1.0.0
+#  mongodb:
+#    database: ${DATABASE}
+#    port: ${DB_PORT}
+#    host: ${DB_HOST}
+#
+#logging:
+#  pattern:
+#    console: ${CONSOLE_LOG_PATTERN:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %cyan(%msg%n)}
+#  level:
+#    root: INFO
+#    com:
+#      ps:
+#        backend: DEBUG
+#  file:
+#    name: ../logs/${spring.application.name}.log
+#    max-size: 10MB
+#    max-history: 30
+#    total-size-cap: 1GB
+#
+#SMTP_FROM: ${SMTP_FROM}
+#server:
+#  port: ${APPLICATION_PORT}
+#
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:9090/eureka/
+#    instance:
+#      instance-id: ${spring.application.name}:${server.port}
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#
+#  endpoint:
+#    health:
+#      show-details: always
+#
+#info:
+#  app:
+#    name: ${spring.application.name}
+#    description: Microservice
+#    version: 1.0.0

@@ -1,5 +1,6 @@
 package com.ps.payment_service.service.impl;
 
+import com.ps.payment_service.client.OrderClient;
 import com.ps.payment_service.customExceptions.ResourceNotFoundException;
 import com.ps.payment_service.model.dto.*;
 import com.ps.payment_service.model.dto.common.PageResponseDTO;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepo paymentRepo;
-
+    private final OrderClient orderClient;
     @Override
     public PaymentResponseDTO initiatePayment(PaymentRequestDTO paymentRequestDTO) {
         Payment  payment = PaymentDTOMapper.toEntity(paymentRequestDTO);
