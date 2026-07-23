@@ -19,12 +19,12 @@ public class EurekaServerApplication {
 		log.info("Eureka Server Started");
 	}
 
-	@Bean
-	CommandLineRunner runner(Environment env) {
-		return args -> {
-			System.out.println("APPLICATION_PORT = " + env.getProperty("APPLICATION_PORT"));
-			System.out.println("server.port      = " + env.getProperty("server.port"));
-		};
-	}
+//	@Bean
+//	CommandLineRunner runner(Environment env) {
+//		return args -> {
+//			System.out.println("APPLICATION_PORT = " + env.getProperty("APPLICATION_PORT"));
+//			System.out.println("server.port      = " + env.getProperty("server.port"));
+//		};
+//	}
 
 }

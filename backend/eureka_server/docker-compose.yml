@@ -1,0 +1,15 @@
+services:
+  eureka-server:
+    build: .
+    image: eureka-server:latest
+    container_name: eureka-server-service
+    ports:
+      - "9090:9090"
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/logs
+networks:
+  default:
+    external: true
+    name: microservices-network
