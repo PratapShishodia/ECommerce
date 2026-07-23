@@ -11,6 +11,7 @@
 	<groupId>com.ps</groupId>
 	<artifactId>config-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name/>
 	<description/>
 	<url/>
@@ -68,6 +69,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>CONFIG_SERVER</finalName>
 	</build>
 
 </project>

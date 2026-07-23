@@ -1,0 +1,15 @@
+services:
+  config-server:
+    build: .
+    image: config-server:latest
+    container_name: config-server-service
+    ports:
+      - "9071:9071"
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/logs
+networks:
+  default:
+    external: true
+    name: microservices-network
