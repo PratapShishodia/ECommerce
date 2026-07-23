@@ -23,6 +23,7 @@ public class Order {
     private String status;
     private String paymentStatus;
     private LocalDateTime orderDate;
+    private Long paymentId;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "order", orphanRemoval = true)
     List<OrderItem> orderItems;
 }

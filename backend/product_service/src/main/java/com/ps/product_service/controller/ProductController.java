@@ -23,20 +23,20 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @PostMapping("/add")
-    public ResponseEntity<ResponseDTO> addProduct(@Valid @RequestBody ProductRequestDTO requestDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(ProductConstants.STATUS_201,ProductConstants.MESSAGE_201, productService.addProduct(requestDTO)));
-    }
+//    @PostMapping("/add")
+//    public ResponseEntity<ResponseDTO> addProduct(@Valid @RequestBody ProductRequestDTO requestDTO){
+//        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(ProductConstants.STATUS_201,ProductConstants.MESSAGE_201, productService.addProduct(requestDTO)));
+//    }
 
 //For Development
-//    @PostMapping("/add")
-//    public ResponseEntity<List<ProductResponseDTO>> addProduct(@Valid @RequestBody List<ProductRequestDTO> requestDTOList){
-//        List<ProductResponseDTO> productResponseDTOList = new ArrayList<>();
-//        for(ProductRequestDTO productRequestDTO : requestDTOList){
-//            productResponseDTOList.add(productService.addProduct(productRequestDTO));
-//        }
-//        return ResponseEntity.status(HttpStatus.CREATED).body(productResponseDTOList);
-//    }
+    @PostMapping("/add")
+    public ResponseEntity<List<ProductResponseDTO>> addProduct(@Valid @RequestBody List<ProductRequestDTO> requestDTOList){
+        List<ProductResponseDTO> productResponseDTOList = new ArrayList<>();
+        for(ProductRequestDTO productRequestDTO : requestDTOList){
+            productResponseDTOList.add(productService.addProduct(productRequestDTO));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(productResponseDTOList);
+    }
 
     @PutMapping("/update/{productId}")
     public ResponseEntity<ResponseDTO> updateProduct(@PathVariable Long productId,@Valid @RequestBody ProductRequestDTO requestDTO){

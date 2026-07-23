@@ -12,6 +12,8 @@ public class OrderDTOMapper {
                 .amount(order.getAmount())
                 .status(order.getStatus())
                 .paymentStatus(order.getPaymentStatus())
+                .orderDate(order.getOrderDate())
+                .paymentId(order.getPaymentId())
                 .orderItems(order.getOrderItems().stream().map(OrderItemDTOMapper::toDTO).toList())
                 .build();
     }

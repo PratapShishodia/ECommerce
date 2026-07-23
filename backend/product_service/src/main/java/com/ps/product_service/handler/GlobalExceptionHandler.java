@@ -2,6 +2,7 @@ package com.ps.product_service.handler;
 
 
 import com.ps.product_service.model.dto.common.ErrorResponseDTO;
+import feign.FeignException;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,17 @@ public class GlobalExceptionHandler {
                 webRequest.getDescription(false), HttpStatus.INTERNAL_SERVER_ERROR,
                 error, LocalDateTime.now());
         return new ResponseEntity<>(ErrorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorResponseDTO> handleFeignException(FeignException ex, WebRequest webRequest) {
+
+        return ResponseEntity
+                .status(ex.status())
+                .body(new ErrorResponseDTO(
+                        webRequest.getDescription(false), HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Downstream service error : " + ex.getMessage(), LocalDateTime.now()
+                ));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

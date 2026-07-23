@@ -1,4 +1,4 @@
-package com.ps.order_service;
+package com.ps.order_service.controller;
 
 import com.ps.order_service.model.dto.common.PageResponseDTO;
 import com.ps.order_service.model.dto.order.OrderRequestDTO;
@@ -34,8 +34,12 @@ public class OrderController {
     public ResponseEntity<OrderResponseDTO> updatePaymentStatus(@PathVariable Long orderId,@RequestParam String status){
         return ResponseEntity.ok(orderService.updatePaymentStatus(orderId,status));
     }
+    @PutMapping("/updatePaymentId/{orderId}")
+    public ResponseEntity<OrderResponseDTO> updatePaymentID(@PathVariable Long orderId,@RequestParam Long paymentId){
+        return ResponseEntity.ok(orderService.updatePaymentId(orderId,paymentId));
+    }
 
-    @PatchMapping("/cancel/{orderId}")
+    @PutMapping("/cancel/{orderId}")
     public ResponseEntity<OrderResponseDTO> cancelOrder(@PathVariable Long orderId){
         return ResponseEntity.ok(orderService.cancelOrder(orderId));
     }

@@ -1,6 +1,7 @@
 package com.ps.user_service.service.impl;
 
 import com.ps.user_service.customExceptions.ResourceNotFoundException;
+import com.ps.user_service.feign.NotificationClient;
 import com.ps.user_service.model.dto.UpdatePasswordDTO;
 import com.ps.user_service.model.dto.UserRequestDTO;
 import com.ps.user_service.model.dto.UserResponseDTO;
@@ -8,6 +9,7 @@ import com.ps.user_service.model.dto.common.LoginDTO;
 import com.ps.user_service.model.dto.common.LoginResponseDTO;
 import com.ps.user_service.model.dto.common.PageResponseDTO;
 import com.ps.user_service.model.dto.common.RefreshRequest;
+import com.ps.user_service.model.dto.feign.NotificationRequestDTO;
 import com.ps.user_service.model.entity.Users;
 import com.ps.user_service.model.mapper.UserDTOMapper;
 import com.ps.user_service.repository.UserRepo;
@@ -27,6 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -36,15 +39,17 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepo userRepo;
     private final BCryptPasswordEncoder encoder;
     private final JWTUtil jwtUtil;
-    private final EmailServiceImpl emailService;
+    private final NotificationClient notificationClient;
     private final UserDetailsService userDetailsService;
 
+    @Transactional
     public LoginResponseDTO signUp(UserRequestDTO userRequestDTO) {
         Users user = UserDTOMapper.toEntity(userRequestDTO);
         user.setPassword(encoder.encode(userRequestDTO.getPassword()));
@@ -57,20 +62,16 @@ public class UserServiceImpl implements UserService {
         }
         Users saveduser = userRepo.save(user);
         String activationLink = "http://localhost:8080/api/user/activate?token=" + saveduser.getActivationToken();
-        String to = saveduser.getEmail();
         String subject = "Profile Activation Link";
         String body = """
                 Hi %s,
                 Welcome to MoneyManager! Please activate your account by clicking the link below:
                 %s
                 If you didn't create this account, you can safely ignore this email.
+                Regards,
+                E-Commerce Team
                 """.formatted(saveduser.getFirstName(), activationLink);
-        boolean mailSent = emailService.sendEmail(to, subject, body);
-        if (mailSent) {
-            System.out.println("Activation Mail Sent Successfully");
-        } else {
-            System.out.println("Activation Mail Not Sent");
-        }
+        notificationClient.sendEmail(NotificationRequestDTO.builder().userId(saveduser.getUserId()).recipient(saveduser.getEmail()).subject(subject).message(body).build());
         return new LoginResponseDTO("SignUp Successful. An activation mail is send to registered Email", UserDTOMapper.toDTO(saveduser), null,null);
     }
 
@@ -101,6 +102,7 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    @Transactional
     public UserResponseDTO updateUser(UserRequestDTO requestDTO) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users updatedUser = null;
@@ -137,6 +139,7 @@ public class UserServiceImpl implements UserService {
         return UserDTOMapper.toDTO(updatedUser);
     }
 
+    @Transactional
     public boolean deleteUser(String email) {
         Users user =  userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User","email",email));
         try{
@@ -147,6 +150,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     public boolean changePassword(UpdatePasswordDTO passwordDTO) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetails != null) {
@@ -161,6 +165,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Transactional
     public boolean sendOTP(String email) {
         Users user = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User Not Found with Email: " + email));
         String OTP = String.valueOf(100000 + new SecureRandom().nextInt(900000));
@@ -169,10 +174,12 @@ public class UserServiceImpl implements UserService {
         user.setOTPVerified(false);
         userRepo.save(user);
         String subject = "Forget Password";
-        String body = "Your OTP to reset your password is <b>" + OTP + "</b>. It is valid for 15 minutes.<br><br>If you didn't request this, please ignore this email.";
-        return emailService.sendEmail(email, subject, body);
+        String body = "Your OTP to reset your password is <b>" + OTP + "</b>. It is valid for 15 minutes.<br><br>If you didn't request this, please ignore this email.\\nRegards,\\nE-Commerce Team";
+        notificationClient.sendEmail(NotificationRequestDTO.builder().recipient(email).message(body).subject(subject).build());
+        return true;
     }
 
+    @Transactional
     public boolean verifyOTP(String email, String OTP) {
         Users user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -193,6 +200,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Transactional
     public boolean ForgetPassword(String email, UpdatePasswordDTO requestDTO) {
         Users user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -210,6 +218,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Transactional
     public boolean activateUser(String activationToken) {
         Users user = userRepo.findByActivationToken(activationToken).orElseThrow(() -> new RuntimeException("User Not Found"));
         user.setActive(true);
@@ -217,6 +226,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Transactional
     public LoginResponseDTO refreshToken(RefreshRequest request) {
         String refreshToken = request.refreshToken();
         String username = jwtUtil.extractUsername(refreshToken);

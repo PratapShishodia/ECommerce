@@ -20,6 +20,8 @@ public class ProductRequestDTO {
     private String productCategory;
     @NotBlank(message = "Brand Name is Required")
     private String brandName;
+    private Integer quantity;
     private String productImageUrl;
     private boolean active;
+    private String warehouseLocation;
 }

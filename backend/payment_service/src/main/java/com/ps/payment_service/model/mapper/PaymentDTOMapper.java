@@ -23,7 +23,6 @@ public class PaymentDTOMapper {
     public static Payment toEntity(PaymentRequestDTO paymentRequestDTO) {
         return Payment.builder()
                 .orderId(paymentRequestDTO.getOrderId())
-                .userId(paymentRequestDTO.getUserId())
                 .amount(paymentRequestDTO.getAmount())
                 .paymentCurrency(paymentRequestDTO.getPaymentCurrency())
                 .paymentMethod(paymentRequestDTO.getPaymentMethod())

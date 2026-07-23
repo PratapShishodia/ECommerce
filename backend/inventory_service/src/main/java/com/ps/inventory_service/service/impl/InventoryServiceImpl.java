@@ -11,6 +11,7 @@ import com.ps.inventory_service.repository.InventoryRepo;
 import com.ps.inventory_service.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class InventoryServiceImpl implements InventoryService {
 
     private final InventoryRepo inventoryRepo;
 
     @Override
+    @Transactional
     public InventoryResponseDTO createInventory(InventoryRequestDTO requestDTO) {
         Inventory inventory = InventoryDTOMapper.toEntity(requestDTO);
         inventory.setInventoryId(UUID.randomUUID().toString().split("-")[0]);
@@ -37,6 +40,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
     public InventoryResponseDTO updateStock(Long productId, InventoryRequestDTO requestDTO) {
         Inventory inventory = inventoryRepo.findByProductId(productId).orElseThrow(()->new ResourceNotFoundException("Inventory","Product Id",String.valueOf(productId)));
         if(requestDTO.getQuantity() <= 0){
@@ -49,6 +53,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
     public InventoryResponseDTO reserveStock(StockOperationRequestDTO requestDTO) {
 
         Inventory inventory = inventoryRepo.findByProductId(requestDTO.getProductId()).orElseThrow(()->new ResourceNotFoundException("Inventory","Product Id",String.valueOf(requestDTO.getProductId())));
@@ -65,6 +70,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
     public InventoryResponseDTO releaseStock(StockOperationRequestDTO requestDTO) {
         Inventory inventory = inventoryRepo.findByProductId(requestDTO.getProductId()).orElseThrow(()->new ResourceNotFoundException("Inventory","Product Id",String.valueOf(requestDTO.getProductId())));
         if (inventory.getReservedQuantity() < requestDTO.getQuantity()) {
@@ -80,6 +86,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
     public InventoryResponseDTO deductStock(StockOperationRequestDTO requestDTO) {
         Inventory inventory = inventoryRepo.findByProductId(requestDTO.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -119,6 +126,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
     public List<InventoryResponseDTO> bulkUpdate(BulkInventoryRequestDTO requestDTO) {
         List<InventoryResponseDTO> responseList = new ArrayList<>();
 

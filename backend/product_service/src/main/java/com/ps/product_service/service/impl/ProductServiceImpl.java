@@ -1,10 +1,12 @@
 package com.ps.product_service.service.impl;
 
 import com.ps.product_service.customExceptions.ResourceNotFoundException;
+import com.ps.product_service.feign.InventoryClient;
 import com.ps.product_service.model.dto.ProductRequestDTO;
 import com.ps.product_service.model.dto.ProductResponseDTO;
 import com.ps.product_service.model.dto.common.FilterRequestDTO;
 import com.ps.product_service.model.dto.common.PageResponseDTO;
+import com.ps.product_service.model.dto.feign.InventoryRequestDTO;
 import com.ps.product_service.model.entity.Product;
 import com.ps.product_service.model.mapper.ProductDTOMapper;
 import com.ps.product_service.repository.ProductRepo;
@@ -14,13 +16,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductServiceImpl implements ProductService {
     private final ProductRepo  productRepo;
+    private final InventoryClient inventoryClient;
 
     @Override
     public ProductResponseDTO findProductById(Long id) {
@@ -73,18 +78,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponseDTO addProduct(ProductRequestDTO productRequestDTO) {
         Product product = ProductDTOMapper.toEntity(productRequestDTO);
-        return ProductDTOMapper.toDTO(productRepo.save(product));
+        Product savedProduct = productRepo.save(product);
+        inventoryClient.addInventory(InventoryRequestDTO.builder().productId(savedProduct.getProductId()).quantity(savedProduct.getQuantity()).warehouseLocation(productRequestDTO.getWarehouseLocation()).build());
+        return ProductDTOMapper.toDTO(savedProduct);
     }
 
     @Override
+    @Transactional
     public String deleteProductById(Long id) {
         Product product = productRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product","ProductId",String.valueOf(id)));
         return "Product deleted successfully";
     }
 
     @Override
+    @Transactional
     public ProductResponseDTO updateProductById(Long id, ProductRequestDTO productRequestDTO) {
         Product product = productRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product","ProductId",String.valueOf(id)));
         if(productRequestDTO.getProductName() != null && !productRequestDTO.getProductName().isEmpty()){
@@ -105,7 +115,11 @@ public class ProductServiceImpl implements ProductService {
         if(productRequestDTO.getProductImageUrl() != null && !productRequestDTO.getProductImageUrl().isEmpty()){
             product.setProductImageUrl(productRequestDTO.getProductImageUrl());
         }
-        return null;
+        if(productRequestDTO.getQuantity() != null){
+            product.setQuantity(product.getQuantity()+ productRequestDTO.getQuantity());
+        }
+        inventoryClient.updateStock(id, InventoryRequestDTO.builder().productId(id).quantity(product.getQuantity()).warehouseLocation(productRequestDTO.getWarehouseLocation()).build());
+        return ProductDTOMapper.toDTO(productRepo.save(product));
     }
 
     @Override

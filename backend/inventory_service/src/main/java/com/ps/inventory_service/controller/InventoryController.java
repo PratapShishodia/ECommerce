@@ -33,16 +33,16 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.updateStock(productId,requestDTO));
     }
 
-    @PatchMapping("/reserveStock")
+    @PutMapping("/reserveStock")
     public ResponseEntity<InventoryResponseDTO> reserveStock(@RequestBody StockOperationRequestDTO requestDTO){
         return ResponseEntity.ok(inventoryService.reserveStock(requestDTO));
     }
 
-    @PatchMapping("/releaseStock")
+    @PutMapping("/releaseStock")
     public ResponseEntity<InventoryResponseDTO> releaseStock(@RequestBody StockOperationRequestDTO requestDTO){
         return ResponseEntity.ok(inventoryService.releaseStock(requestDTO));
     }
-    @PatchMapping("/deductStock")
+    @PutMapping("/deductStock")
     public ResponseEntity<InventoryResponseDTO> deductStock(@RequestBody StockOperationRequestDTO requestDTO){
         return ResponseEntity.ok(inventoryService.deductStock(requestDTO));
     }

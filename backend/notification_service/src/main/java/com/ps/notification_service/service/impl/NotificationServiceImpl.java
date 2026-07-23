@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,12 +23,14 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepo  notificationRepo;
     private final EmailService emailService;
 
     @Override
+    @Transactional
     public NotificationResponseDTO sendEmail(NotificationRequestDTO requestDTO) {
         Notification notification = NotificationDTOMapper.toEntity(requestDTO);
         notification.setNotificationId(UUID.randomUUID().toString().split("-")[0]);
@@ -68,6 +71,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @Transactional
     public NotificationResponseDTO updateNotificationStatus(String notificationId, NotificationStatus status) {
         Notification notification = notificationRepo.findById(notificationId).orElseThrow(() -> new ResourceNotFoundException("Notification","Notification Id",String.valueOf(notificationId)));
         notification.setStatus(status);

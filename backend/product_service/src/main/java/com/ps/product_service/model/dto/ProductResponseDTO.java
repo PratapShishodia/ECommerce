@@ -18,4 +18,5 @@ public class ProductResponseDTO {
     private String brandName;
     private String productImageUrl;
     private boolean active;
+    private int quantity;
 }

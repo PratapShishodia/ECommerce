@@ -12,7 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class PaymentRequestDTO {
-    private Long userId;
     private Long orderId;
     private BigDecimal amount;
     private String paymentCurrency;

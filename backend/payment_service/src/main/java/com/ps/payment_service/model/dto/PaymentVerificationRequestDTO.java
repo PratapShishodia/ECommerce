@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PaymentVerificationRequestDTO {
+    private Long orderId;
     private Long paymentId;
-    private String transactionId;
 }

@@ -26,7 +26,7 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.getNotificationsByUser(page_num,page_size,userId));
     }
 
-    @PostMapping("/send")
+    @PostMapping("/email")
     public ResponseEntity<NotificationResponseDTO> sendNotification(@RequestBody NotificationRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(notificationService.sendEmail(requestDTO));
     }

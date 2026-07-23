@@ -14,6 +14,7 @@ public class ProductDTOMapper {
                 .productCategory(product.getProductCategory())
                 .brandName(product.getBrandName())
                 .productImageUrl(product.getProductImageUrl())
+                .quantity(product.getQuantity())
                 .active(product.isActive())
                 .build();
     }
@@ -27,6 +28,7 @@ public class ProductDTOMapper {
                 .brandName(requestDTO.getBrandName())
                 .productImageUrl(requestDTO.getProductImageUrl())
                 .active(requestDTO.isActive())
+                .quantity(requestDTO.getQuantity())
                 .build();
     }
 }
